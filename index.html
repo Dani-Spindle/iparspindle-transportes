@@ -474,7 +474,11 @@ async function saveTransportista(){
     sel.value=cur;
     renderTransportistas();
     resetFormTransportista();
-  }catch(e){toast('Error al guardar','error');console.error(e);}
+  }catch(e){
+    let msg='Error al guardar';
+    try{const j=JSON.parse(e.message);msg=j.message||msg;}catch(_){}
+    toast(msg,'error');console.error(e);
+  }
   finally{btn.textContent='Guardar';btn.disabled=false;}
 }
 
