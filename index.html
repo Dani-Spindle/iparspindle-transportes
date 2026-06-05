@@ -204,6 +204,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <th>Portes</th>
           <th onclick="sortTransportes('precio')" style="cursor:pointer">Precio <span class="tr-sort" data-col="precio"></span></th>
           <th>Observaciones</th>
+          <th onclick="sortTransportes('fecha_confirmacion')" style="cursor:pointer">Estado <span class="tr-sort" data-col="fecha_confirmacion"></span></th>
           <th></th>
         </tr>
       </thead>
@@ -336,7 +337,7 @@ async function loadTransportes(){
 
 function renderTransportes(){
   const tbody=document.getElementById('tr-tbody');
-  if(!transportes.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:32px">Sin transportes registrados</td></tr>';return;}
+  if(!transportes.length){tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--text3);padding:32px">Sin transportes registrados</td></tr>';return;}
   tbody.innerHTML=transportes.map(t=>{
     const proy=proyectos.find(p=>p.id===t.proyecto_id);
     const dir=t.direccion==='ipar_a_cliente'?'<span class="tr-badge vuelta">Ipar → Cliente</span>':'<span class="tr-badge ida">Cliente → Ipar</span>';
@@ -344,6 +345,12 @@ function renderTransportes(){
     const peso=t.peso_kg?t.peso_kg+' kg':'—';
     const portes=t.portes_pagados?'✓ Pagados':'—';
     const tid=esc(t.id);
+    const confirmado=t.fecha_confirmacion;
+    const estadoBadge=confirmado
+      ?`<span style="background:var(--green-light);color:var(--green);padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap">✓ Enviado</span>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px">${esc(t.matricula_conductor||'')}</div>
+        <div style="font-size:11px;color:var(--text2)">${esc(t.nombre_operario||'')}</div>`
+      :`<span style="background:var(--bg);color:var(--text3);padding:2px 8px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid var(--border)">Pendiente</span>`;
     return `<tr>
       <td><span style="font-family:'DM Mono',monospace;font-size:12px">${esc(proy?proy.numero:t.proyecto_id||'—')}</span></td>
       <td>${esc(t.cliente||'—')}</td>
@@ -354,6 +361,7 @@ function renderTransportes(){
       <td style="font-size:12px">${portes}</td>
       <td style="font-size:12px;font-weight:500">${t.precio?fmt(t.precio)+' €':'—'}</td>
       <td style="font-size:12px;color:var(--text2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.observaciones||'')}</td>
+      <td style="font-size:12px">${estadoBadge}</td>
       <td style="white-space:nowrap;text-align:right">
         <button class="btn btn-ghost btn-sm" onclick="printAlbaran('${tid}')" title="Albarán">🖨️</button>
         <button class="btn btn-ghost btn-sm" onclick="editTransporte('${tid}')" title="Editar">✏️</button>
