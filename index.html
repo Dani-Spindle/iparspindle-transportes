@@ -58,6 +58,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 .section-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.header-nav{display:flex;gap:2px}
+.nav-btn{background:none;border:none;padding:6px 14px;font-family:inherit;font-size:13px;font-weight:500;color:var(--text2);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}
+.nav-btn:hover{background:var(--bg);color:var(--text)}
+.nav-btn.active{background:var(--accent-light);color:var(--accent)}
+.tab-view{display:none}.tab-view.active{display:block}
 
 .toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;box-shadow:var(--shadow-md);transform:translateY(60px);opacity:0;transition:all .25s;z-index:300}
 .toast.show{transform:translateY(0);opacity:1}
@@ -102,14 +107,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="header-left">
     <div class="header-logo">Ipar<span>Spindle</span></div>
     <div class="hdiv"></div>
-    <div class="header-title">Transportes</div>
+    <nav class="header-nav">
+      <button class="nav-btn active" id="nav-transportes" onclick="showTab('transportes')">Transportes</button>
+      <button class="nav-btn" id="nav-transportistas" onclick="showTab('transportistas')">Transportistas</button>
+    </nav>
   </div>
-  <button class="btn btn-primary" onclick="openFormTransporte()">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Nuevo transporte
-  </button>
+  <div id="header-action">
+    <button class="btn btn-primary" id="btn-nuevo-transporte" onclick="openFormTransporte()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nuevo transporte
+    </button>
+    <button class="btn btn-primary" id="btn-nuevo-transportista" style="display:none" onclick="openFormTransportista()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nuevo transportista
+    </button>
+  </div>
 </div>
 
+<div id="tab-transportes" class="tab-view active">
 <div class="main">
   <!-- Formulario -->
   <div class="tr-form-card" id="tr-form-wrap">
@@ -134,7 +149,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="form-group">
         <label class="form-label">Transportista</label>
-        <input class="form-input" id="trf-transportista" type="text" placeholder="Nombre del transportista">
+        <select class="form-select" id="trf-transportista">
+          <option value="">— Seleccionar —</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label">Largo (cm)</label>
@@ -214,6 +231,61 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </table>
   </div>
 </div>
+</div><!-- /tab-transportes -->
+
+<!-- TAB TRANSPORTISTAS -->
+<div id="tab-transportistas" class="tab-view">
+<div class="main">
+  <div class="tr-form-card" id="tsta-form-wrap">
+    <div class="tr-form-title" id="tsta-form-title">Nuevo transportista</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Nombre *</label>
+        <input class="form-input" id="tsta-nombre" type="text" placeholder="Empresa o nombre">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono</label>
+        <input class="form-input" id="tsta-telefono" type="tel" placeholder="">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="tsta-email" type="email" placeholder="">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contacto</label>
+        <input class="form-input" id="tsta-contacto" type="text" placeholder="Persona de contacto">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notas</label>
+        <textarea class="form-textarea" id="tsta-notas" placeholder="Observaciones..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" id="btn-tsta-cancel" onclick="cancelFormTransportista()" style="display:none">Cancelar</button>
+      <button class="btn btn-primary" id="btn-tsta-save" onclick="saveTransportista()">Guardar</button>
+    </div>
+  </div>
+
+  <div class="section-bar"><div class="section-title">Transportistas registrados</div></div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+    <table class="tr-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Contacto</th>
+          <th>Notas</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tsta-tbody">
+        <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:32px">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div><!-- /tab-transportistas -->
 
 <div class="toast" id="toast"></div>
 
@@ -269,11 +341,25 @@ async function api(path,method='GET',body=null){
 }
 
 const IPAR={nombre:'Ipar Spindle SL',direccion:'Pol. Ind. Itziar, Parcela 5, Subparcela 2, Pab. 1\n20829 Itziar-Deba (Guipúzcoa)',contacto:'Taller',telefono:''};
-let proyectos=[], transportes=[], editTrId=null, trSortCol=null, trSortDir=1;
+let proyectos=[], transportes=[], transportistas=[], editTrId=null, trSortCol=null, trSortDir=1;
+let editTstaId=null;
+
+// ===== TABS =====
+function showTab(tab){
+  ['transportes','transportistas'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('nav-'+t).classList.toggle('active',t===tab);
+  });
+  document.getElementById('btn-nuevo-transporte').style.display=tab==='transportes'?'':'none';
+  document.getElementById('btn-nuevo-transportista').style.display=tab==='transportistas'?'':'none';
+  if(tab==='transportistas') loadTransportistas();
+}
 
 async function init(){
-  const rows=await api('proyectos?select=id,numero,cliente_nombre&order=numero.desc');
-  proyectos=rows||[];
+  const [pRows] = await Promise.all([
+    api('proyectos?select=id,numero,cliente_nombre&order=numero.desc'),
+  ]);
+  proyectos=pRows||[];
   const sel=document.getElementById('trf-proyecto');
   proyectos.forEach(p=>{
     const o=document.createElement('option');
@@ -281,7 +367,125 @@ async function init(){
     o.dataset.cliente=p.cliente_nombre||'';
     sel.appendChild(o);
   });
+  await loadTransportistas(true); // carga transportistas para el select
   await loadTransportes();
+}
+
+// ===== TRANSPORTISTAS =====
+async function loadTransportistas(silent=false){
+  if(!silent){
+    document.getElementById('tsta-tbody').innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:32px">Cargando...</td></tr>';
+  }
+  try{
+    transportistas=await api('transportistas?select=*&order=nombre.asc')||[];
+    // Actualizar select del formulario de transportes
+    const sel=document.getElementById('trf-transportista');
+    const current=sel.value;
+    sel.innerHTML='<option value="">— Seleccionar —</option>';
+    transportistas.forEach(t=>{
+      const o=document.createElement('option');
+      o.value=t.nombre; o.textContent=t.nombre;
+      sel.appendChild(o);
+    });
+    sel.value=current;
+    if(!silent) renderTransportistas();
+  }catch(e){
+    if(!silent) document.getElementById('tsta-tbody').innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:32px">Error al cargar</td></tr>';
+  }
+}
+
+function renderTransportistas(){
+  const tbody=document.getElementById('tsta-tbody');
+  if(!transportistas.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:32px">Sin transportistas registrados</td></tr>';return;}
+  tbody.innerHTML=transportistas.map(t=>{
+    const tid=esc(t.id);
+    return `<tr>
+      <td style="font-weight:500">${esc(t.nombre||'')}</td>
+      <td style="font-size:12px">${esc(t.telefono||'—')}</td>
+      <td style="font-size:12px">${esc(t.email||'—')}</td>
+      <td style="font-size:12px">${esc(t.contacto||'—')}</td>
+      <td style="font-size:12px;color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.notas||'')}</td>
+      <td style="white-space:nowrap;text-align:right">
+        <button class="btn btn-ghost btn-sm" onclick="editTransportista('${tid}')" title="Editar">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteTransportista('${tid}')" title="Eliminar" style="color:var(--accent)">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openFormTransportista(){
+  resetFormTransportista();
+  document.getElementById('tsta-form-wrap').scrollIntoView({behavior:'smooth'});
+}
+
+function resetFormTransportista(){
+  editTstaId=null;
+  document.getElementById('tsta-form-title').textContent='Nuevo transportista';
+  ['tsta-nombre','tsta-telefono','tsta-email','tsta-contacto'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('tsta-notas').value='';
+  document.getElementById('btn-tsta-cancel').style.display='none';
+}
+
+function cancelFormTransportista(){resetFormTransportista();}
+
+function editTransportista(id){
+  const t=transportistas.find(x=>String(x.id)===String(id));
+  if(!t) return;
+  editTstaId=id;
+  document.getElementById('tsta-form-title').textContent='Editar transportista';
+  document.getElementById('tsta-nombre').value=t.nombre||'';
+  document.getElementById('tsta-telefono').value=t.telefono||'';
+  document.getElementById('tsta-email').value=t.email||'';
+  document.getElementById('tsta-contacto').value=t.contacto||'';
+  document.getElementById('tsta-notas').value=t.notas||'';
+  document.getElementById('btn-tsta-cancel').style.display='';
+  document.getElementById('tsta-form-wrap').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveTransportista(){
+  const nombre=document.getElementById('tsta-nombre').value.trim();
+  if(!nombre){toast('El nombre es obligatorio','error');return;}
+  const body={
+    nombre,
+    telefono:vf('tsta-telefono'),
+    email:vf('tsta-email'),
+    contacto:vf('tsta-contacto'),
+    notas:vf('tsta-notas'),
+  };
+  const btn=document.getElementById('btn-tsta-save');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    if(editTstaId){
+      await api('transportistas?id=eq.'+editTstaId,'PATCH',body);
+      const i=transportistas.findIndex(x=>String(x.id)===String(editTstaId));
+      if(i>=0) transportistas[i]={...transportistas[i],...body};
+      toast('Transportista actualizado','success');
+    } else {
+      const r=await api('transportistas?select=*','POST',body);
+      transportistas.push(r[0]);
+      transportistas.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+      toast('Transportista añadido','success');
+    }
+    // Actualizar select
+    const sel=document.getElementById('trf-transportista');
+    const cur=sel.value;
+    sel.innerHTML='<option value="">— Seleccionar —</option>';
+    transportistas.forEach(t=>{const o=document.createElement('option');o.value=t.nombre;o.textContent=t.nombre;sel.appendChild(o);});
+    sel.value=cur;
+    renderTransportistas();
+    resetFormTransportista();
+  }catch(e){toast('Error al guardar','error');console.error(e);}
+  finally{btn.textContent='Guardar';btn.disabled=false;}
+}
+
+async function deleteTransportista(id){
+  if(!confirm('¿Eliminar este transportista?')) return;
+  try{
+    await api('transportistas?id=eq.'+id,'DELETE');
+    transportistas=transportistas.filter(x=>String(x.id)!==String(id));
+    renderTransportistas();
+    toast('Eliminado','success');
+  }catch(e){toast('Error al eliminar','error');}
 }
 
 async function onTrProyChange(){
