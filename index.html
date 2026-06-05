@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script>(function(){const A="aXBhcjIzMTI=";const p=new URLSearchParams(location.search).get("auth");if(p===A){sessionStorage.setItem("ipar_auth",A);return;}if(sessionStorage.getItem("ipar_auth")===A)return;document.documentElement.style.display="none";document.addEventListener("DOMContentLoaded",function(){document.documentElement.style.display="";var o=document.createElement("div");o.style.cssText="position:fixed;inset:0;background:#f0ede8;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:sans-serif;";o.innerHTML='<div style="font-size:28px;font-weight:700;letter-spacing:3px;color:#b8872a;">IPAR SPINDLE</div><div style="font-size:12px;letter-spacing:2px;color:#999;text-transform:uppercase;">PIN de acceso</div><input id="_pin" type="password" inputmode="numeric" maxlength="10" style="width:150px;text-align:center;font-size:24px;letter-spacing:6px;padding:10px;border:2px solid #e0dbd3;border-radius:8px;outline:none;" autofocus><button onclick="_chk()" style="background:#b8872a;color:#fff;border:none;border-radius:8px;padding:10px 32px;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Entrar</button><div id="_err" style="display:none;color:#e05c5c;font-size:13px;">PIN incorrecto</div>';document.body.appendChild(o);document.getElementById("_pin").addEventListener("keydown",function(e){if(e.key==="Enter")_chk();});window._chk=function(){var v=document.getElementById("_pin").value;if(btoa("ipar"+v)===A){sessionStorage.setItem("ipar_auth",A);location.reload();}else{document.getElementById("_err").style.display="block";document.getElementById("_pin").value="";setTimeout(function(){document.getElementById("_err").style.display="none";},2000);}};});})();</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transportes — Ipar Spindle</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#f4f3f0;--surface:#fff;--surface2:#f9f8f6;--border:#e2e0db;--border2:#d0cdc7;
+  --text:#1a1917;--text2:#6b6760;--text3:#9e9b96;
+  --accent:#c8392b;--accent-light:#fdf0ee;
+  --accent2:#2b5fc8;--accent2-light:#eef2fd;
+  --green:#2a7d4f;--green-light:#edf7f2;
+  --orange:#c87b2b;--orange-light:#fdf5ee;
+  --shadow:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 12px rgba(0,0,0,.1);
+  --radius:10px;--radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-logo{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.header-logo span{color:var(--accent)}
+.hdiv{width:1px;height:20px;background:var(--border)}
+.header-title{font-size:14px;color:var(--text2)}
+
+.main{padding:24px 28px;max-width:1400px;margin:0 auto}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid transparent;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-primary:hover{background:#b02d21}
+.btn-secondary{background:var(--surface);color:var(--text2);border-color:var(--border)}.btn-secondary:hover{background:var(--bg)}
+.btn-ghost{background:none;color:var(--text2);border-color:transparent;padding:5px 8px}.btn-ghost:hover{background:var(--bg)}
+.btn-sm{padding:4px 10px;font-size:12px}
+
+.tr-form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow);margin-bottom:24px}
+.tr-form-title{font-size:13px;font-weight:600;margin-bottom:16px;color:var(--text)}
+.tr-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:500}
+.tr-badge.ida{background:var(--accent2-light);color:var(--accent2)}
+.tr-badge.vuelta{background:var(--orange-light);color:var(--orange)}
+.tr-table{width:100%;border-collapse:collapse;font-size:13px}
+.tr-table th{text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.tr-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tr-table tr:last-child td{border-bottom:none}
+.tr-table tr:hover td{background:var(--surface2)}
+.tr-sort{font-size:11px;color:var(--text3)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:500;color:var(--text2)}
+.form-input,.form-textarea,.form-select{padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent2)}
+.form-textarea{resize:vertical;min-height:60px}
+.checkbox-wrap{display:flex;align-items:center;gap:8px;font-size:13px}
+
+.section-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;box-shadow:var(--shadow-md);transform:translateY(60px);opacity:0;transition:all .25s;z-index:300}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green)}.toast.error{background:var(--accent)}
+
+/* ALBARÁN PRINT */
+@media print{
+  @page{size:A4;margin:14mm 14mm 14mm 14mm}
+  body>*{display:none!important}
+  #albaran-print-area{display:block!important;padding:0!important}
+}
+#albaran-print-area{display:none;font-family:'DM Sans',sans-serif;padding:24px;max-width:800px;margin:0 auto}
+.alb-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #1a1917}
+.alb-logo{font-size:22px;font-weight:700;letter-spacing:1px}
+.alb-logo span{color:#c8392b}
+.alb-meta{text-align:right;font-size:12px;color:#555}
+.alb-meta strong{display:block;font-size:18px;color:#1a1917;margin-bottom:4px}
+.alb-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #e2e0db;border-radius:8px;overflow:hidden;margin-bottom:14px}
+.alb-cell{padding:10px 14px;border-bottom:1px solid #e2e0db;border-right:1px solid #e2e0db}
+.alb-cell:nth-child(even){border-right:none}
+.alb-cell.full{grid-column:1/-1;border-right:none}
+.alb-cell:nth-last-child(-n+2){border-bottom:none}
+.alb-cell.full:last-child{border-bottom:none}
+.alb-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#555;margin-bottom:3px}
+.alb-v{font-size:13px;color:#1a1917;font-weight:500}
+.alb-qr-row{display:flex;gap:20px;align-items:flex-start;margin-bottom:16px}
+.alb-qr-box{border:1px solid #e2e0db;border-radius:8px;padding:12px;text-align:center;flex-shrink:0}
+.alb-qr-label{font-size:10px;color:#555;margin-top:6px;text-transform:uppercase;letter-spacing:.4px}
+.alb-sign{flex:1;border:1px solid #c0bdb8;border-radius:8px;padding:14px}
+.alb-sign-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#333;margin-bottom:12px}
+.alb-sign-field{margin-bottom:14px}
+.alb-sign-field label{font-size:12px;color:#333;font-weight:500;display:block;margin-bottom:4px}
+.alb-sign-line{border-bottom:1.5px solid #1a1917;height:24px}
+.alb-footer{font-size:10px;color:#9e9b96;text-align:center;padding-top:12px;border-top:1px solid #e2e0db}
+
+@media(max-width:640px){.form-grid{grid-template-columns:1fr}.main{padding:16px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">Ipar<span>Spindle</span></div>
+    <div class="hdiv"></div>
+    <div class="header-title">Transportes</div>
+  </div>
+  <button class="btn btn-primary" onclick="openFormTransporte()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nuevo transporte
+  </button>
+</div>
+
+<div class="main">
+  <!-- Formulario -->
+  <div class="tr-form-card" id="tr-form-wrap">
+    <div class="tr-form-title" id="tr-form-title">Nuevo transporte</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Proyecto *</label>
+        <select class="form-select" id="trf-proyecto" onchange="onTrProyChange()">
+          <option value="">— Seleccionar proyecto —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <input class="form-input" id="trf-cliente" type="text" readonly placeholder="Se carga automáticamente" style="background:var(--surface2);color:var(--text2)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dirección *</label>
+        <select class="form-select" id="trf-direccion">
+          <option value="ipar_a_cliente">Ipar → Cliente</option>
+          <option value="cliente_a_ipar">Cliente → Ipar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transportista</label>
+        <input class="form-input" id="trf-transportista" type="text" placeholder="Nombre del transportista">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Largo (cm)</label>
+        <input class="form-input" id="trf-largo" type="number" min="0" step="0.1" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ancho (cm)</label>
+        <input class="form-input" id="trf-ancho" type="number" min="0" step="0.1" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Alto (cm)</label>
+        <input class="form-input" id="trf-alto" type="number" min="0" step="0.1" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Peso (kg)</label>
+        <input class="form-input" id="trf-peso" type="number" min="0" step="0.1" placeholder="0">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Dirección de entrega / recogida <span style="color:var(--text3);font-weight:400">(editable)</span></label>
+        <textarea class="form-textarea" id="trf-direccion-entrega" placeholder="Se carga desde el cliente..." rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Persona de contacto <span style="color:var(--text3);font-weight:400">(editable)</span></label>
+        <input class="form-input" id="trf-contacto" type="text" placeholder="Se carga desde el cliente...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono <span style="color:var(--text3);font-weight:400">(editable)</span></label>
+        <input class="form-input" id="trf-telefono" type="tel" placeholder="Se carga desde el cliente...">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Portes pagados</label>
+        <div class="checkbox-wrap" style="margin-top:4px">
+          <input type="checkbox" id="trf-portes-pagados" onchange="togglePortesImporte()">
+          <span>Sí, portes pagados</span>
+        </div>
+        <div id="portes-importe-wrap" style="display:none;margin-top:12px;max-width:300px">
+          <label class="form-label">Precio transporte (€)</label>
+          <input class="form-input" id="trf-precio" type="number" min="0" step="0.01" placeholder="0.00" style="margin-top:4px">
+          <input type="hidden" id="trf-portes-importe">
+        </div>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Observaciones</label>
+        <textarea class="form-textarea" id="trf-obs" placeholder="Notas adicionales..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" id="btn-tr-cancel" onclick="cancelFormTransporte()" style="display:none">Cancelar</button>
+      <button class="btn btn-primary" id="btn-tr-save" onclick="saveTransporte()">Guardar transporte</button>
+    </div>
+  </div>
+
+  <!-- Listado -->
+  <div class="section-bar">
+    <div class="section-title">Transportes registrados</div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+    <table class="tr-table">
+      <thead>
+        <tr>
+          <th onclick="sortTransportes('proyecto')" style="cursor:pointer">Proyecto <span class="tr-sort" data-col="proyecto"></span></th>
+          <th onclick="sortTransportes('cliente')" style="cursor:pointer">Cliente <span class="tr-sort" data-col="cliente"></span></th>
+          <th onclick="sortTransportes('direccion')" style="cursor:pointer">Dirección <span class="tr-sort" data-col="direccion"></span></th>
+          <th>Transportista</th>
+          <th>Medidas (cm)</th>
+          <th>Peso</th>
+          <th>Portes</th>
+          <th onclick="sortTransportes('precio')" style="cursor:pointer">Precio <span class="tr-sort" data-col="precio"></span></th>
+          <th>Observaciones</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tr-tbody">
+        <tr><td colspan="10" style="text-align:center;color:var(--text3);padding:32px">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ÁREA IMPRESIÓN ALBARÁN -->
+<div id="albaran-print-area">
+  <div class="alb-header">
+    <div class="alb-logo">Ipar<span>Spindle</span></div>
+    <div class="alb-meta">
+      <strong id="alb-num">ALBARÁN DE TRANSPORTE</strong>
+      <span id="alb-fecha"></span>
+    </div>
+  </div>
+  <!-- RECOGIDA / ENTREGA -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div style="border:2px solid #1a1917;border-radius:8px;padding:14px 16px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#555;margin-bottom:8px" id="alb-label-recogida">RECOGIDA</div>
+      <div style="font-size:14px;line-height:1.7;font-weight:500" id="alb-datos-recogida"></div>
+    </div>
+    <div style="border:2px solid #c8392b;border-radius:8px;padding:14px 16px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#c8392b;margin-bottom:8px" id="alb-label-entrega">ENTREGA</div>
+      <div style="font-size:14px;line-height:1.7;font-weight:500" id="alb-datos-entrega"></div>
+    </div>
+  </div>
+  <!-- DATOS ENVÍO -->
+  <div class="alb-grid" id="alb-grid" style="margin-bottom:14px"></div>
+  <!-- QR + FIRMA -->
+  <div class="alb-qr-row">
+    <div class="alb-qr-box">
+      <div id="alb-qr"></div>
+      <div class="alb-qr-label">Escanear para confirmar</div>
+    </div>
+    <div class="alb-sign" style="flex:1">
+      <div class="alb-sign-title">Confirmación</div>
+      <div class="alb-sign-field"><label>Matrícula del vehículo</label><div class="alb-sign-line"></div></div>
+      <div class="alb-sign-field"><label>Nombre operario (carga / entrega)</label><div class="alb-sign-line"></div></div>
+      <div class="alb-sign-field" style="margin-bottom:0"><label>Firma y fecha</label><div class="alb-sign-line" style="height:44px"></div></div>
+    </div>
+  </div>
+  <div class="alb-footer">Ipar Spindle · Albarán generado automáticamente</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const SB='https://nhgkobfxcktggahdtlta.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oZ2tvYmZ4Y2t0Z2dhaGR0bHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NTc4NzEsImV4cCI6MjA5NTEzMzg3MX0.S6Zyo2gStK7yo7e5pKhanoCayy_wmpn5wOpAeZZhWDc';
+const H={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'};
+
+async function api(path,method='GET',body=null){
+  const r=await fetch(SB+'/rest/v1/'+path,{method,headers:H,body:body?JSON.stringify(body):null});
+  if(!r.ok) throw new Error(await r.text());
+  if(method==='DELETE') return null;
+  const t=await r.text(); return t?JSON.parse(t):null;
+}
+
+const IPAR={nombre:'Ipar Spindle SL',direccion:'Pol. Ind. Itziar, Parcela 5, Subparcela 2, Pab. 1\n20829 Itziar-Deba (Guipúzcoa)',contacto:'Taller',telefono:''};
+let proyectos=[], transportes=[], editTrId=null, trSortCol=null, trSortDir=1;
+
+async function init(){
+  const rows=await api('proyectos?select=id,numero,cliente_nombre&order=numero.desc');
+  proyectos=rows||[];
+  const sel=document.getElementById('trf-proyecto');
+  proyectos.forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p.id; o.textContent=p.numero+(p.cliente_nombre?' — '+p.cliente_nombre:'');
+    o.dataset.cliente=p.cliente_nombre||'';
+    sel.appendChild(o);
+  });
+  await loadTransportes();
+}
+
+async function onTrProyChange(){
+  const sel=document.getElementById('trf-proyecto');
+  const opt=sel.options[sel.selectedIndex];
+  const clienteNombre=(opt&&opt.value)?opt.dataset.cliente||'':'';
+  document.getElementById('trf-cliente').value=clienteNombre;
+  document.getElementById('trf-direccion-entrega').value='';
+  document.getElementById('trf-contacto').value='';
+  document.getElementById('trf-telefono').value='';
+  if(!clienteNombre) return;
+  try{
+    const norm=s=>(s||'').toLowerCase().replace(/[.\s,]/g,'');
+    const all=await api('clientes?select=nombre,direccion,contacto,telefono');
+    const c=(all||[]).find(r=>norm(r.nombre).includes(norm(clienteNombre))||norm(clienteNombre).includes(norm(r.nombre)));
+    if(c){
+      if(c.direccion) document.getElementById('trf-direccion-entrega').value=c.direccion;
+      if(c.contacto)  document.getElementById('trf-contacto').value=c.contacto;
+      if(c.telefono)  document.getElementById('trf-telefono').value=c.telefono;
+    }
+  }catch(e){console.warn('No se pudo cargar datos del cliente',e);}
+}
+
+function togglePortesImporte(){
+  document.getElementById('portes-importe-wrap').style.display=document.getElementById('trf-portes-pagados').checked?'block':'none';
+}
+
+function sortTransportes(col){
+  if(trSortCol===col) trSortDir*=-1; else{trSortCol=col;trSortDir=1;}
+  document.querySelectorAll('.tr-sort').forEach(el=>{
+    el.textContent=el.dataset.col===col?(trSortDir===1?' ↑':' ↓'):'';
+  });
+  transportes.sort((a,b)=>{
+    let va,vb;
+    if(col==='proyecto'){const pa=proyectos.find(p=>p.id===a.proyecto_id),pb=proyectos.find(p=>p.id===b.proyecto_id);va=pa?String(pa.numero):'';vb=pb?String(pb.numero):'';}
+    else if(col==='precio'){va=a.precio||0;vb=b.precio||0;return(va-vb)*trSortDir;}
+    else{va=String(a[col]||'').toLowerCase();vb=String(b[col]||'').toLowerCase();}
+    return va<vb?-trSortDir:va>vb?trSortDir:0;
+  });
+  renderTransportes();
+}
+
+async function loadTransportes(){
+  const tbody=document.getElementById('tr-tbody');
+  tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:32px">Cargando...</td></tr>';
+  try{
+    transportes=await api('transportes?select=*&order=created_at.desc')||[];
+    renderTransportes();
+  }catch(e){
+    tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:32px">Error al cargar</td></tr>';
+  }
+}
+
+function renderTransportes(){
+  const tbody=document.getElementById('tr-tbody');
+  if(!transportes.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:32px">Sin transportes registrados</td></tr>';return;}
+  tbody.innerHTML=transportes.map(t=>{
+    const proy=proyectos.find(p=>p.id===t.proyecto_id);
+    const dir=t.direccion==='ipar_a_cliente'?'<span class="tr-badge vuelta">Ipar → Cliente</span>':'<span class="tr-badge ida">Cliente → Ipar</span>';
+    const medidas=[t.largo_cm,t.ancho_cm,t.alto_cm].filter(Boolean).length?`${t.largo_cm||'—'} × ${t.ancho_cm||'—'} × ${t.alto_cm||'—'}`:'—';
+    const peso=t.peso_kg?t.peso_kg+' kg':'—';
+    const portes=t.portes_pagados?'✓ Pagados':'—';
+    const tid=esc(t.id);
+    return `<tr>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px">${esc(proy?proy.numero:t.proyecto_id||'—')}</span></td>
+      <td>${esc(t.cliente||'—')}</td>
+      <td>${dir}</td>
+      <td style="font-size:12px;color:var(--text2)">${esc(t.transportista||'—')}</td>
+      <td style="font-size:12px;color:var(--text2)">${medidas}</td>
+      <td style="font-size:12px;color:var(--text2)">${peso}</td>
+      <td style="font-size:12px">${portes}</td>
+      <td style="font-size:12px;font-weight:500">${t.precio?fmt(t.precio)+' €':'—'}</td>
+      <td style="font-size:12px;color:var(--text2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.observaciones||'')}</td>
+      <td style="white-space:nowrap;display:flex;gap:4px;padding:8px 12px">
+        <button class="btn btn-ghost btn-sm" onclick="printAlbaran('${tid}')" title="Albarán">🖨️</button>
+        <button class="btn btn-ghost btn-sm" onclick="editTransporte('${tid}')" title="Editar">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteTransporte('${tid}')" title="Eliminar" style="color:var(--accent)">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openFormTransporte(){resetFormTransporte();document.getElementById('tr-form-wrap').scrollIntoView({behavior:'smooth'});}
+
+function resetFormTransporte(){
+  editTrId=null;
+  document.getElementById('tr-form-title').textContent='Nuevo transporte';
+  document.getElementById('trf-proyecto').value='';
+  document.getElementById('trf-cliente').value='';
+  document.getElementById('trf-direccion').value='ipar_a_cliente';
+  ['trf-largo','trf-ancho','trf-alto','trf-peso','trf-portes-importe','trf-precio','trf-transportista','trf-contacto','trf-telefono'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('trf-obs').value='';
+  document.getElementById('trf-direccion-entrega').value='';
+  document.getElementById('trf-portes-pagados').checked=false;
+  document.getElementById('portes-importe-wrap').style.display='none';
+  document.getElementById('btn-tr-cancel').style.display='none';
+}
+
+function cancelFormTransporte(){resetFormTransporte();}
+
+function editTransporte(id){
+  const t=transportes.find(x=>String(x.id)===String(id));
+  if(!t) return;
+  editTrId=id;
+  document.getElementById('tr-form-title').textContent='Editar transporte';
+  const sel=document.getElementById('trf-proyecto');
+  for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===t.proyecto_id){sel.selectedIndex=i;break;}}
+  document.getElementById('trf-cliente').value=t.cliente||'';
+  document.getElementById('trf-direccion').value=t.direccion||'ipar_a_cliente';
+  document.getElementById('trf-largo').value=t.largo_cm||'';
+  document.getElementById('trf-ancho').value=t.ancho_cm||'';
+  document.getElementById('trf-alto').value=t.alto_cm||'';
+  document.getElementById('trf-peso').value=t.peso_kg||'';
+  document.getElementById('trf-portes-pagados').checked=!!t.portes_pagados;
+  document.getElementById('trf-portes-importe').value=t.portes_importe||'';
+  document.getElementById('portes-importe-wrap').style.display=t.portes_pagados?'block':'none';
+  document.getElementById('trf-precio').value=t.precio||'';
+  document.getElementById('trf-transportista').value=t.transportista||'';
+  document.getElementById('trf-direccion-entrega').value=t.direccion_entrega||'';
+  document.getElementById('trf-contacto').value=t.contacto||'';
+  document.getElementById('trf-telefono').value=t.telefono_contacto||'';
+  document.getElementById('trf-obs').value=t.observaciones||'';
+  document.getElementById('btn-tr-cancel').style.display='';
+  document.getElementById('tr-form-wrap').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveTransporte(){
+  const sel=document.getElementById('trf-proyecto');
+  const proyId=sel.value;
+  if(!proyId){toast('Selecciona un proyecto','error');return;}
+  const cliente=document.getElementById('trf-cliente').value;
+  const body={
+    proyecto_id:proyId,cliente:cliente||null,
+    direccion:document.getElementById('trf-direccion').value,
+    largo_cm:parseFloat(document.getElementById('trf-largo').value)||null,
+    ancho_cm:parseFloat(document.getElementById('trf-ancho').value)||null,
+    alto_cm:parseFloat(document.getElementById('trf-alto').value)||null,
+    peso_kg:parseFloat(document.getElementById('trf-peso').value)||null,
+    transportista:vf('trf-transportista'),
+    direccion_entrega:vf('trf-direccion-entrega'),
+    contacto:vf('trf-contacto'),
+    telefono_contacto:vf('trf-telefono'),
+    portes_pagados:document.getElementById('trf-portes-pagados').checked,
+    portes_importe:parseFloat(document.getElementById('trf-portes-importe').value)||null,
+    precio:parseFloat(document.getElementById('trf-precio').value)||null,
+    observaciones:vf('trf-obs'),
+  };
+  const btn=document.getElementById('btn-tr-save');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    if(editTrId){
+      await api('transportes?id=eq.'+editTrId,'PATCH',body);
+      const i=transportes.findIndex(x=>x.id===editTrId);
+      if(i>=0) transportes[i]={...transportes[i],...body};
+      toast('Transporte actualizado','success');
+    } else {
+      const r=await api('transportes?select=*','POST',body);
+      transportes.unshift(r[0]);
+      toast('Transporte registrado','success');
+    }
+    renderTransportes();resetFormTransporte();
+  }catch(e){toast('Error al guardar','error');console.error(e);}
+  finally{btn.textContent='Guardar transporte';btn.disabled=false;}
+}
+
+function printAlbaran(id){
+  const t=transportes.find(x=>String(x.id)===String(id));
+  if(!t){toast('Transporte no encontrado','error');return;}
+  const proy=proyectos.find(p=>String(p.id)===String(t.proyecto_id));
+  const dirL=t.direccion==='ipar_a_cliente'?'Ipar → Cliente':'Cliente → Ipar';
+  const medidas=[t.largo_cm,t.ancho_cm,t.alto_cm].filter(Boolean).length?`${t.largo_cm||'—'} × ${t.ancho_cm||'—'} × ${t.alto_cm||'—'} cm`:'—';
+  const fecha=new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'});
+  document.getElementById('alb-fecha').textContent=fecha;
+  document.getElementById('alb-num').textContent='ALBARÁN #'+String(t.id).split('-')[0].toUpperCase();
+  const portes=t.portes_pagados?'Pagados':'Debidos';
+  document.getElementById('alb-grid').innerHTML=`
+    <div class="alb-cell"><div class="alb-k">Proyecto</div><div class="alb-v">${esc(proy?proy.numero:'—')}</div></div>
+    <div class="alb-cell"><div class="alb-k">Cliente</div><div class="alb-v">${esc(t.cliente||'—')}</div></div>
+    <div class="alb-cell"><div class="alb-k">Sentido</div><div class="alb-v">${dirL}</div></div>
+    <div class="alb-cell"><div class="alb-k">Transportista</div><div class="alb-v">${esc(t.transportista||'—')}</div></div>
+    <div class="alb-cell"><div class="alb-k">Medidas</div><div class="alb-v">${medidas}</div></div>
+    <div class="alb-cell"><div class="alb-k">Peso</div><div class="alb-v">${t.peso_kg?t.peso_kg+' kg':'—'}</div></div>
+    <div class="alb-cell"><div class="alb-k">Portes</div><div class="alb-v">${portes}</div></div>
+    <div class="alb-cell"><div class="alb-k">Observaciones</div><div class="alb-v">${esc(t.observaciones||'—')}</div></div>`;
+  const htmlCliente=[t.cliente?`<strong>${esc(t.cliente)}</strong>`:'',t.direccion_entrega?esc(t.direccion_entrega).replace(/\n/g,'<br>'):'',t.contacto?esc(t.contacto):'',t.telefono_contacto?esc(t.telefono_contacto):''].filter(Boolean).join('<br>')||'<span style="color:#9e9b96">Sin datos</span>';
+  const htmlIpar=[`<strong>${IPAR.nombre}</strong>`,IPAR.direccion.replace(/\n/g,'<br>'),IPAR.contacto,IPAR.telefono].filter(Boolean).join('<br>');
+  if(t.direccion==='ipar_a_cliente'){document.getElementById('alb-datos-recogida').innerHTML=htmlIpar;document.getElementById('alb-datos-entrega').innerHTML=htmlCliente;}
+  else{document.getElementById('alb-datos-recogida').innerHTML=htmlCliente;document.getElementById('alb-datos-entrega').innerHTML=htmlIpar;}
+  const qrEl=document.getElementById('alb-qr');qrEl.innerHTML='';
+  new QRCode(qrEl,{text:'https://transporte.iparspindle.com/?id='+t.id,width:120,height:120,colorDark:'#1a1917',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  window.print();
+}
+
+async function deleteTransporte(id){
+  if(!confirm('¿Eliminar este transporte?')) return;
+  try{
+    await api('transportes?id=eq.'+id,'DELETE');
+    transportes=transportes.filter(x=>String(x.id)!==String(id));
+    renderTransportes();toast('Eliminado','success');
+  }catch(e){toast('Error al eliminar','error');}
+}
+
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(()=>t.className='toast',3000);}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+function vf(id){const v=document.getElementById(id).value.trim();return v||null;}
+function fmt(n){return(+n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+init();
+</script>
+<!-- pin v1 -->
+</body>
+</html>
