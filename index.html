@@ -503,10 +503,11 @@ async function onTrProyChange(){
   if(!clienteNombre) return;
   try{
     const norm=s=>(s||'').toLowerCase().replace(/[.\s,]/g,'');
-    const all=await api('clientes?select=nombre,direccion,contacto,telefono');
+    const all=await api('clientes?select=nombre,direccion,calle,codigo_postal,poblacion,provincia,pais,contacto,telefono');
     const c=(all||[]).find(r=>norm(r.nombre).includes(norm(clienteNombre))||norm(clienteNombre).includes(norm(r.nombre)));
     if(c){
-      if(c.direccion) document.getElementById('trf-direccion-entrega').value=c.direccion;
+      const dir=[c.calle||c.direccion, [c.codigo_postal,c.poblacion].filter(Boolean).join(' '), c.provincia, c.pais].filter(Boolean).join('\n');
+      if(dir) document.getElementById('trf-direccion-entrega').value=dir;
       if(c.contacto)  document.getElementById('trf-contacto').value=c.contacto;
       if(c.telefono)  document.getElementById('trf-telefono').value=c.telefono;
     }
